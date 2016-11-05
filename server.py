@@ -1,6 +1,7 @@
 import socket
 from random import randint  
 def Main():
+
     mySocket = socket.socket()
     
     host = socket.gethostname()
@@ -21,8 +22,8 @@ def Main():
 
             data = str(data)
             data = int(data)
-            print("You Guessed : " + str(data))
             num = randint(0,5)
+
             if (int(data) == num):
             	msg = "winner winner"
             else:
@@ -30,10 +31,7 @@ def Main():
 
             if not data:
                     break
-           # print ("from connected  user: " + str(data))
-             
-            #data = str(data).upper()
-            #print ("sending: " + str(data))
+
             conn.send(msg.encode())
              
     conn.close()
