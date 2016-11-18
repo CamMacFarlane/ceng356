@@ -3,10 +3,11 @@ import socket
 def Main():
     mySocket = socket.socket()
     
-    host = socket.gethostname()
+    #host = socket.gethostname()
+    maxLaptopHost = "192.168.1.176"
     port = 5000
      
-    mySocket.connect((host,port))
+    mySocket.connect((maxLaptopHost,port))
      
          
          

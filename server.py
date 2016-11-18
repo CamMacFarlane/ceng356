@@ -1,30 +1,38 @@
 import socket
-from random import randint  
-def Main():
-    mySocket = socket.socket()
-    
-    host = socket.gethostname()
-    port = 5000
-     
-    mySocket.bind((host,port))
-     
-    mySocket.listen(1)
-    conn, addr = mySocket.accept()
-    print ("Connection from: " + str(addr))
-    
+import threading
+from random import randint
 
-    while True:
+class ThreadedServer(object):
+    def __init__(self, host, port):
+        print ("in init")
+        self.port = port
+        self.host = host
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.sock.bind((self.host, self.port))
+
+    def listen(self):
+        print ("in listen")
+        self.sock.listen(5)
+        while True:
+            client, address = self.sock.accept()
+            client.settimeout(60)
+            threading.Thread(target = self.listenToClient,args = (client,address)).start()
+
+    def listenToClient(self, client, address):
+        print ("in listen to client")
+        while True:
             msg = "Guess my number!"
-            conn.send(msg.encode())
+            client.send(msg.encode())
     
-            data = conn.recv(1024).decode()
+            data = client.recv(1024).decode()
 
             data = str(data)
             data = int(data)
             print("You Guessed : " + str(data))
             num = randint(0,5)
             if (int(data) == num):
-            	msg = "winner winner"
+                msg = "winner winner"
             else:
                 msg = ("loser loser num was " + str(num))
 
@@ -34,9 +42,9 @@ def Main():
              
             #data = str(data).upper()
             #print ("sending: " + str(data))
-            conn.send(msg.encode())
-             
-    conn.close()
-     
-if __name__ == '__main__':
-    Main()
+            client.send(msg.encode())
+        client.close()
+
+if __name__ == "__main__":
+    port_num = 5000
+    ThreadedServer('0.0.0.0', port_num).listen()
