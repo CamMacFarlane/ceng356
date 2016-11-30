@@ -3,12 +3,11 @@ import socket
 def Main():
     mySocket = socket.socket()
     
-    #host = socket.gethostname()
-    maxLaptopHost = "192.168.1.176"
+    host = socket.gethostname()
+    #host = "192.168.1.176" #max's laptop
     port = 5000
      
-    mySocket.connect((maxLaptopHost,port))
-     
+    mySocket.connect((host,port))
          
          
     while True:
@@ -16,11 +15,11 @@ def Main():
         print ('Received from server: ' + data)          
         
 
-        message = input(" -> ")
-        mySocket.send(message.encode())
+        #message = input(" -> ")
+        #mySocket.send(message.encode())
 
-        data = mySocket.recv(1024).decode()
-        print ('Received from server: ' + data) 
+        #data = mySocket.recv(1024).decode()
+        #print ('Received from server: ' + data) 
                  
     mySocket.close()
  
