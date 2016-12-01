@@ -77,7 +77,7 @@ class ThreadedServer(object):
 
     def listenToClient2(self, client, address):
         print ("player 2 connected")
-        msg = "You are Player 2"
+        msg = "Howdy Partner"
         client.send(msg.encode())
         global player2RT
         player2RT = -1
