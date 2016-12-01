@@ -46,8 +46,9 @@ class ThreadedServer(object):
     	self.playerNumber = 2
     	threading.Thread(target = self.listenToClient2,args = (client,address)).start()
 
-    	#game logic here
-    	self.mainGame()
+    	while True:
+    		#game logic here
+    		self.mainGame()
 
 
     def listenToClient1(self, client, address):
@@ -101,6 +102,10 @@ class ThreadedServer(object):
         client.close()
     	
     def mainGame(self):
+
+        global player2RT
+        global player1RT
+
         grab = random.choice(string.ascii_lowercase)
         draw = random.choice(string.ascii_lowercase)
         aim = random.choice(string.ascii_lowercase)
@@ -130,6 +135,11 @@ class ThreadedServer(object):
         else:
             self.p2rq.put("LOSER")
             self.p1rq.put("WINNER")
+
+        player1RT = -1
+        player2RT = -1
+
+        time.sleep(10)
             
 
 

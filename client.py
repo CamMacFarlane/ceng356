@@ -37,7 +37,7 @@ def Main():
             state = battle         
        
         elif(state == battle):
-            waitTime = random.randint(5,10)
+            waitTime = random.randint(3,10)
             for i in range (0, waitTime):  
                 print("11:59...")
                 time.sleep(1)
@@ -57,8 +57,9 @@ def Main():
        
         elif(state == done):
             data = mySocket.recv(1024).decode()
-            print (data)          
-            time.sleep(10)
+            print (data)   
+            time.sleep(5)      
+            state = waiting
 
         else:
             print("undefined state!")
