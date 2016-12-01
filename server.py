@@ -5,6 +5,9 @@ import random
 import string
 import time
 
+
+player1RT = -1
+player2RT = -1
 class ThreadedServer(object):
 
 
@@ -47,30 +50,7 @@ class ThreadedServer(object):
         		#game logic here
 
         		#generate 5 random letters
-        		grab = random.choice(string.ascii_lowercase)
-        		draw = random.choice(string.ascii_lowercase)
-        		aim = random.choice(string.ascii_lowercase)
-        		cock = random.choice(string.ascii_lowercase)
-        		shoot = random.choice(string.ascii_lowercase)
-
-        		print ("The letters for this round are: [" + grab + "], [" + draw + "], [" + aim + "], [" + cock + "], [" + shoot + "]")
-
-        		#begin game
-
-        		#distribute the letters to both clients
-        		self.p1rq.put("letterList")
-        		self.p1rq.put(grab)
-        		self.p1rq.put(draw)
-        		self.p1rq.put(aim)
-        		self.p1rq.put(cock)
-        		self.p1rq.put(shoot)
-
-        		self.p2rq.put("letterList")
-        		self.p2rq.put(grab)
-        		self.p2rq.put(draw)
-        		self.p2rq.put(aim)
-        		self.p2rq.put(cock)
-        		self.p2rq.put(shoot)
+        		self.mainGame()
 
         		#test
         		time.sleep(5)
@@ -82,100 +62,88 @@ class ThreadedServer(object):
         		#declare winner
 
     def listenToClient1(self, client, address):
-    	print ("player 1 connected")
-    	msg = "You are Player 1"
-    	client.send(msg.encode())
+        print ("player 1 connected")
+        msg = "You are Player 1"
+        client.send(msg.encode())
+        global player1RT
+        player1RT = -1
+        while True:
+            qitem = self.p1rq.get()
+            if qitem == "letterList":
+                llist =  self.p1rq.get()
+       	        client.send(qitem.encode())
+       	        
+                if(client.recv(100).decode() == "ack"):
+                    client.send(llist.encode())
+                    raw = client.recv(100).decode()
+                    print("recived player 1 rt = " + raw)
+                    player1RT = float(raw)
+                    time.sleep(1)
+                    client.send(self.p1rq.get().encode())
+       	        else:
+                    break
 
-    	while True:
-    		#example
-
-            #msg = "You are Player 1"
-            #client.send(msg.encode())
-    
-            #data = client.recv(1024).decode()
-
-            #data = str(data)
-            #data = int(data)
-            #print("You Guessed : " + str(data))
-            #num = randint(0,5)
-            #if (int(data) == num):
-            #    msg = "winner winner"
-            #else:
-            #    msg = ("loser loser num was " + str(num))
-
-            #if not data:
-            #        break
-            #print ("from connected  user: " + str(data))
-             
-            #data = str(data).upper()
-            #print ("sending: " + str(data))
-        	#client.send(msg.encode())
-
-        	qitem = self.p1rq.get()
-        	
-
-        	if qitem == "letterList":
-        		grab = self.p1rq.get()
-        		draw = self.p1rq.get()
-        		aim = self.p1rq.get()
-        		cock = self.p1rq.get()
-        		shoot = self.p1rq.get()
-
-        		client.send(qitem.encode())
-        		client.send(grab.encode())
-        		client.send(draw.encode())
-        		client.send(aim.encode())
-        		client.send(cock.encode())
-        		client.send(shoot.encode())
-
-    	client.close()
+        client.close()
 
     def listenToClient2(self, client, address):
-    	print ("player 2 connected")
-    	msg = "You are Player 2"
-    	client.send(msg.encode())
+        print ("player 2 connected")
+        msg = "You are Player 2"
+        client.send(msg.encode())
+        global player2RT
+        player2RT = -1
+        while True:
 
-    	while True:
-            #example
+            qitem = self.p2rq.get()
 
-            #msg = "You are Player 1"
-            #client.send(msg.encode())
-    
-            #data = client.recv(1024).decode()
+            if qitem == "letterList":
+                llist =  self.p2rq.get()
 
-            #data = str(data)
-            #data = int(data)
-            #print("You Guessed : " + str(data))
-            #num = randint(0,5)
-            #if (int(data) == num):
-            #    msg = "winner winner"
-            #else:
-            #    msg = ("loser loser num was " + str(num))
+                client.send(qitem.encode())
+       	        if(client.recv(100).decode() == "ack"):
+                    client.send(llist.encode())
+                   
+                    raw = client.recv(100).decode()
+                    print("recived player 2 rt = " + raw)
+                    player2RT = float(raw)
+                    time.sleep(1)
+                    client.send(self.p2rq.get().encode())
+       	        else:
+                    break
+        client.close()
+    	
+    def mainGame(self):
+        grab = random.choice(string.ascii_lowercase)
+        draw = random.choice(string.ascii_lowercase)
+        aim = random.choice(string.ascii_lowercase)
+        cock = random.choice(string.ascii_lowercase)
+        shoot = random.choice(string.ascii_lowercase)
 
-            #if not data:
-            #        break
-            #print ("from connected  user: " + str(data))
-             
-            #data = str(data).upper()
-            #print ("sending: " + str(data))
-        	#client.send(msg.encode())
+        print ("The letters for this round are: [" + grab + "], [" + draw + "], [" + aim + "], [" + cock + "], [" + shoot + "]")
 
-        	qitem = self.p2rq.get()
+        #begin game
 
-        	if qitem == "letterList":
-        		grab = self.p2rq.get()
-        		draw = self.p2rq.get()
-        		aim = self.p2rq.get()
-        		cock = self.p2rq.get()
-        		shoot = self.p2rq.get()
+        #distribute the letters to both clients
+        self.p1rq.put("letterList")
+        self.p1rq.put(grab + draw + aim + cock + shoot)
 
-        		client.send(qitem.encode())
-        		client.send(grab.encode())
-        		client.send(draw.encode())
-        		client.send(aim.encode())
-        		client.send(cock.encode())
-        		client.send(shoot.encode())
-    	client.close()
+        self.p2rq.put("letterList")
+        self.p2rq.put(grab + draw + aim + cock + shoot)
+        
+        while((player1RT == -1) or (player2RT == -1)):
+            print("waiting for clients to respond...")
+            time.sleep(5)
+        
+        #player 2 won
+        if(player1RT > player2RT):
+            self.p1rq.put("LOSER")
+            self.p2rq.put("WINNER")
+        #player 1 won
+        else:
+            self.p2rq.put("LOSER")
+            self.p1rq.put("WINNER")
+            
+
+
 
 if __name__ == "__main__":
 	port_num = 5000
