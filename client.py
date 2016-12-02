@@ -2,10 +2,11 @@ import socket
 import time
 import random
 from datetime import datetime
-waiting = 0
-recievingGameData = 1
-battle = 2
-done = 3 
+intro = 0 
+waiting = 1
+recievingGameData = 2
+battle = 3
+done = 4 
 def Main():
     mySocket = socket.socket()
     
@@ -15,13 +16,37 @@ def Main():
      
     mySocket.connect((host,port))
     ackString = "ack"     
-    state = waiting
+    state = intro
 
     while True:
+
+        if(state == intro):
+            intromsg = """\
+
+
+
+      .~~~~`\\~~\\\n
+     ;       ~~ \\\n
+     |           ;\n
+ ,--------,______|---.\n
+/          \\-----`    \\\n
+`.__________`-_______-'\n
+
+Howdy Partner! Welcome to Quicker Draw!
+Type the letters faster than your opponent to shoot that cactus sucker before they shoot you!
+
+Speanking of which, where is that coward?
+
+
+
+"""
+            print(intromsg)
+            state = waiting
+
         if(state == waiting):
             data = mySocket.recv(1024).decode()
-            #print ('Received from server: ' + data)          
-            print("waiting for other cowboy")
+            #print ('Received from server: ' + data)   
+            #print("Waiting for other cowboy.")
             if (data == "letterList"):
                 mySocket.send(ackString.encode())
                 state = recievingGameData
@@ -43,7 +68,7 @@ def Main():
                 time.sleep(1)
             print("NOON!")
             start = datetime.now()    
-            userString = input("shoot before you get shot!")
+            userString = input("shoot!")
             stop = datetime.now()
             if (userString == shootSequence):
                 reactionDateTime = stop - start

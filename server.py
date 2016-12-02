@@ -46,6 +46,9 @@ class ThreadedServer(object):
     	self.playerNumber = 2
     	threading.Thread(target = self.listenToClient2,args = (client,address)).start()
 
+    	#wait for both players to read the intro
+    	time.sleep(5)
+
     	while True:
     		#game logic here
     		self.mainGame()
@@ -53,8 +56,6 @@ class ThreadedServer(object):
 
     def listenToClient1(self, client, address):
         print ("player 1 connected")
-        msg = "Howdy Partner"
-        client.send(msg.encode())
         global player1RT
         player1RT = -1
         while True:
@@ -77,8 +78,6 @@ class ThreadedServer(object):
 
     def listenToClient2(self, client, address):
         print ("player 2 connected")
-        msg = "Howdy Partner"
-        client.send(msg.encode())
         global player2RT
         player2RT = -1
         while True:
