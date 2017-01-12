@@ -131,9 +131,13 @@ class ThreadedServer(object):
             self.p1rq.put("LOSER")
             self.p2rq.put("WINNER")
         #player 1 won
+        if(player1RT < player2RT):
+            self.p1rq.put("WINNER")
+            self.p2rq.put("LOSER")
+      
         else:
             self.p2rq.put("LOSER")
-            self.p1rq.put("WINNER")
+            self.p1rq.put("LOSER")
 
         player1RT = -1
         player2RT = -1
