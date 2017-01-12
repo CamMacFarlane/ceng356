@@ -90,7 +90,7 @@ class ThreadedServer(object):
                 client.send(qitem.encode())
        	        if(client.recv(100).decode() == "ack"):
                     client.send(llist.encode())
-                   
+                    
                     raw = client.recv(100).decode()
                     print("recived player 2 rt = " + raw)
                     player2RT = float(raw)
